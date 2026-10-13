@@ -1,4 +1,4 @@
-html
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,21 +6,21 @@ html
 </head>
 <body>
 
-<p><span style=>*</span> - Denotes Required Information</p>
+<p><span>*</span> - Denotes Required Information</p>
 
 <p><b>&gt; 1 Donation</b> &nbsp;&nbsp; &gt; 2 Confirmation &nbsp;&nbsp; &gt; Thank You!</p>
 
-<h3 style=>Donor Information</h3>
+<h3>Donor Information</h3>
 
-<form>
+<form id="donationForm">
 
 <table>
     <tr>
-        <th>First Name<span style=>*</span>:</th>
+        <th>First Name<span>*</span>:</th>
         <td><input type="text" name="firstname" required></td>
     </tr>
     <tr>
-        <th>Last Name<span style=>*</span>:</th>
+        <th>Last Name<span>*</span>:</th>
         <td><input type="text" name="lastname" required></td>
     </tr>
     <tr>
@@ -28,7 +28,7 @@ html
         <td><input type="text" name="company"></td>
     </tr>
     <tr>
-        <th>Address 1<span style=>*</span>:</th>
+        <th>Address 1<span>*</span>:</th>
         <td><input type="text" name="address1" required></td>
     </tr>
     <tr>
@@ -36,11 +36,11 @@ html
         <td><input type="text" name="address2"></td>
     </tr>
     <tr>
-        <th>City<span style=>*</span>:</th>
+        <th>City<span>*</span>:</th>
         <td><input type="text" name="city" required></td>
     </tr>
     <tr>
-        <th>State<span style=>*</span>:</th>
+        <th>State<span>*</span>:</th>
         <td>
             <select name="state" required>
                 <option value="">Select a State</option>
@@ -51,11 +51,11 @@ html
         </td>
     </tr>
     <tr>
-        <th>Zip Code<span style=>*</span>:</th>
+        <th>Zip Code<span>*</span>:</th>
         <td><input type="text" name="zipcode" required></td>
     </tr>
     <tr>
-        <th>Country<span style=>*</span>:</th>
+        <th>Country<span>*</span>:</th>
         <td>
             <select name="country" required>
                 <option value="">Select a Country</option>
@@ -75,12 +75,12 @@ html
         <td><input type="text" name="fax"></td>
     </tr>
     <tr>
-        <th>Email<span style=>*</span>:</th>
+        <th>Email<span>*</span>:</th>
         <td><input type="email" name="email" required></td>
     </tr>
     <tr>
-        <th valign="top">
-            Donation Amount<span style=>*</span>:
+        <th>
+            Donation Amount<span>*</span>:
             <br>
             <span style="font-weight: normal;">(Check a button or type in your amount)</span>
         </th>
@@ -97,7 +97,7 @@ html
         </td>
     </tr>
     <tr>
-        <th valign="top">
+        <th>
             Recurring Donation:
             <br>
             <span style="font-weight: normal;">(Check if yes)</span>
@@ -115,7 +115,7 @@ html
     </tr>
 </table>
 
-<h3 style=>Honorarium and Memorial Donation Information</h3>
+<h3>Honorarium and Memorial Donation Information</h3>
 
 <table>
     <tr>
@@ -159,7 +159,75 @@ html
     </tr>
 </table>
 
+<br>
+
+<button type="button" onclick="saveForm()">Continue</button>
+<button type="button" onclick="resetForm()">Reset</button>
+
 </form>
+
+<script>
+    var form = document.getElementById("donationForm");
+
+    window.onload = function() {
+        var savedData = localStorage.getItem("donationFormData");
+
+        if (savedData) {
+            var data = JSON.parse(savedData);
+
+            for (var name in data) {
+                var fields = form.elements[name];
+
+                if (!fields) {
+                    continue;
+                }
+
+                if (fields.length && fields[0].type === "radio") {
+                    for (var i = 0; i < fields.length; i++) {
+                        fields[i].checked = fields[i].value === data[name];
+                    }
+                } else if (fields.type === "checkbox") {
+                    fields.checked = data[name];
+                } else {
+                    fields.value = data[name];
+                }
+            }
+        }
+    };
+
+    function saveForm() {
+        var data = {};
+
+        for (var i = 0; i < form.elements.length; i++) {
+            var field = form.elements[i];
+
+            if (!field.name) {
+                continue;
+            }
+
+            if (field.type === "radio") {
+                if (field.checked) {
+                    data[field.name] = field.value;
+                }
+            } else if (field.type === "checkbox") {
+                data[field.name] = field.checked;
+            } else {
+                data[field.name] = field.value;
+            }
+        }
+
+        localStorage.setItem("donationFormData", JSON.stringify(data));
+
+        alert("Your information has been saved!");
+    }
+
+    function resetForm() {
+        form.reset();
+        localStorage.removeItem("donationFormData");
+        alert("The form and saved information have been cleared!");
+    }
+</script>
 
 </body>
 </html>
+```
